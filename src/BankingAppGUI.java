@@ -58,7 +58,7 @@ public class BankingAppGUI extends JFrame {
 
     private JPanel createWelcomePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(240, 248, 255));
+        panel.setBackground(new Color(231, 221, 72));
 
         // Title
         JLabel titleLabel = new JLabel("BANKING MANAGEMENT SYSTEM", SwingConstants.CENTER);
@@ -107,7 +107,7 @@ public class BankingAppGUI extends JFrame {
 
     private JPanel createRegisterPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(240, 248, 255));
+        panel.setBackground(new Color(231, 221, 72));
 
         // Title
         JLabel titleLabel = new JLabel("User Registration", SwingConstants.CENTER);
@@ -202,7 +202,7 @@ public class BankingAppGUI extends JFrame {
 
     private JPanel createLoginPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(240, 248, 255));
+        panel.setBackground(new Color(231, 221, 72));
 
         // Title
         JLabel titleLabel = new JLabel("User Login", SwingConstants.CENTER);
@@ -425,7 +425,7 @@ public class BankingAppGUI extends JFrame {
         dialog.setLocationRelativeTo(this);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(new Color(240, 248, 255));
+        panel.setBackground(new Color(231, 221, 72));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -487,7 +487,7 @@ public class BankingAppGUI extends JFrame {
         dialog.setLocationRelativeTo(this);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(new Color(240, 248, 255));
+        panel.setBackground(new Color(251, 70, 4));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -550,7 +550,7 @@ public class BankingAppGUI extends JFrame {
         dialog.setLocationRelativeTo(this);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(new Color(240, 248, 255));
+        panel.setBackground(new Color(10, 135, 244));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -581,7 +581,7 @@ public class BankingAppGUI extends JFrame {
         panel.add(pinField, gbc);
 
         JButton submitBtn = createStyledButton("Transfer", new Color(156, 39, 176));
-        JButton cancelBtn = createStyledButton("Cancel", new Color(117, 117, 117));
+        JButton cancelBtn = createStyledButton("Cancel", new Color(250, 5, 5));
 
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -623,7 +623,7 @@ public class BankingAppGUI extends JFrame {
         dialog.setLocationRelativeTo(this);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(new Color(240, 248, 255));
+        panel.setBackground(new Color(21, 244, 5));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
