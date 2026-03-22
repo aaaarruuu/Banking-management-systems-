@@ -158,10 +158,6 @@ public class User {
         return false;
     }
 
-    /**
-     * Hash password using SHA-256
-     * Note: For production, use BCrypt or Argon2 instead
-     */
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

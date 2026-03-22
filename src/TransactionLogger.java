@@ -35,18 +35,15 @@ public class TransactionLogger {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            // If logging fails, print a warning but DO NOT crash the whole app.
-            // The money transfer already succeeded — logging is secondary.
+
             System.err.println("Warning: Could not save transaction record — " + e.getMessage());
         }
     }
 
     public List<String[]> getHistory(long accountNumber) {
 
-        // This will hold all the rows we find
         List<String[]> rows = new ArrayList<>();
 
-        // Fetch the most recent 50 transactions, newest first
         String sql = "SELECT transaction_date, type, amount, balance_after, description " +
                 "FROM Transactions " +
                 "WHERE account_number = ? " +
@@ -80,7 +77,6 @@ public class TransactionLogger {
             e.printStackTrace();
         }
 
-        // Return the list (could be empty if no transactions yet)
         return rows;
     }
 
@@ -102,6 +98,6 @@ public class TransactionLogger {
             e.printStackTrace();
         }
 
-        return 0.0;  // if something goes wrong, return 0
+        return 0.0;
     }
 }

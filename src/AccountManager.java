@@ -4,69 +4,29 @@ import java.sql.*;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * AccountManager handles all money operations:
- *   - Credit (add money)
- *   - Debit  (remove money)
- *   - Transfer (move money between accounts)
- *   - Check balance
- *   - Get transaction history  ← NEW
- *
- * Changes from your original:
- *   1. Added a TransactionLogger field at the top
- *   2. After every SUCCESSFUL money operation, we call
- *      transactionLogger.saveTransaction(...) to record it
- *   3. Added input validation (no negative amounts, no empty PIN)
- *   4. Added getTransactionHistoryGUI() for the new History screen
- *
- * All method NAMES are exactly the same as your original.
- * Your BankingAppGUI.java will not need any changes for these methods.
- */
 public class AccountManager {
 
     private Connection connection;
     private Scanner scanner;
-
-    // ── NEW FIELD ──────────────────────────────────────────────────
-    // This object knows how to write to the Transactions table.
-    // We create it once here and use it in every method below.
     private TransactionLogger transactionLogger;
-    // ──────────────────────────────────────────────────────────────
 
     AccountManager(Connection connection, Scanner scanner) {
         this.connection = connection;
         this.scanner = scanner;
-
-        // ── NEW LINE ───────────────────────────────────────────────
-        // Give the logger the same database connection we use here
         this.transactionLogger = new TransactionLogger(connection);
-        // ──────────────────────────────────────────────────────────
     }
 
-
-    // ══════════════════════════════════════════════════════════════
-    // CREDIT MONEY — GUI version
-    // Called when user clicks "Submit" on the Credit dialog.
-    // Returns true if money was added, false if something went wrong.
-    // ══════════════════════════════════════════════════════════════
     public boolean credit_moneyGUI(long account_number, double amount, String security_pin) {
 
-        // ── VALIDATION ─────────────────────────────────────────────
-        // Check for bad input BEFORE touching the database.
-        // This prevents silly errors like depositing -500 rupees.
         if (amount <= 0) {
-            return false;  // amount must be positive
+            return false;
         }
         if (security_pin == null || security_pin.trim().isEmpty()) {
-            return false;  // PIN cannot be blank
+            return false;
         }
-        // ──────────────────────────────────────────────────────────
 
         try {
-            // Turn off auto-commit so we can roll back if something fails
             connection.setAutoCommit(false);
-
-            // Step 1: Check that the account number + PIN are correct
             PreparedStatement checkPin = connection.prepareStatement(
                     "SELECT * FROM Accounts WHERE account_number = ? AND security_pin = ?"
             );
@@ -75,7 +35,6 @@ public class AccountManager {
             ResultSet rs = checkPin.executeQuery();
 
             if (rs.next()) {
-                // PIN is correct — now add the money
                 PreparedStatement addMoney = connection.prepareStatement(
                         "UPDATE Accounts SET balance = balance + ? WHERE account_number = ?"
                 );
@@ -85,24 +44,21 @@ public class AccountManager {
                 int rowsChanged = addMoney.executeUpdate();
 
                 if (rowsChanged > 0) {
-                    // Money was added successfully!
-                    connection.commit();  // save the change permanently
 
-                    // ── NEW LINE ───────────────────────────────────
-                    // Record this in the Transactions table
+                    connection.commit();
+
                     transactionLogger.saveTransaction(
-                            account_number,     // which account
-                            "CREDIT",           // type of transaction
-                            amount,             // how much
-                            "Cash deposit"      // description
+                            account_number,
+                            "CREDIT",
+                            amount,
+                            "Cash deposit"
                     );
-                    // ──────────────────────────────────────────────
 
                     return true;  // success!
                 }
             }
 
-            // If we reach here, something went wrong — undo everything
+
             connection.rollback();
             return false;
 
@@ -116,23 +72,16 @@ public class AccountManager {
         }
     }
 
-
-    // ══════════════════════════════════════════════════════════════
-    // DEBIT MONEY — GUI version
-    // Returns "SUCCESS" if money was removed,
-    // or an error message string if something went wrong.
-    // The error message is shown to the user in a dialog.
-    // ══════════════════════════════════════════════════════════════
     public String debit_moneyGUI(long account_number, double amount, String security_pin) {
 
-        // ── VALIDATION ─────────────────────────────────────────────
+
         if (amount <= 0) {
             return "Amount must be greater than zero!";
         }
         if (security_pin == null || security_pin.trim().isEmpty()) {
             return "Security PIN cannot be empty!";
         }
-        // ──────────────────────────────────────────────────────────
+
 
         try {
             connection.setAutoCommit(false);
@@ -195,16 +144,10 @@ public class AccountManager {
         }
     }
 
-
-    // ══════════════════════════════════════════════════════════════
-    // TRANSFER MONEY — GUI version
-    // Moves money from sender to receiver.
-    // Returns "SUCCESS" or an error message.
-    // ══════════════════════════════════════════════════════════════
     public String transfer_moneyGUI(long sender_account, long receiver_account,
                                     double amount, String security_pin) {
 
-        // ── VALIDATION ─────────────────────────────────────────────
+
         if (amount <= 0) {
             return "Amount must be greater than zero!";
         }
@@ -214,7 +157,7 @@ public class AccountManager {
         if (sender_account == receiver_account) {
             return "Cannot transfer to your own account!";
         }
-        // ──────────────────────────────────────────────────────────
+
 
         try {
             connection.setAutoCommit(false);
@@ -270,23 +213,21 @@ public class AccountManager {
             if (debitRows > 0 && creditRows > 0) {
                 connection.commit();
 
-                // ── NEW LINES ──────────────────────────────────────
-                // Record BOTH sides of the transfer:
-                // The sender sees "TRANSFER_SENT" in their history
+
                 transactionLogger.saveTransaction(
                         sender_account,
                         "TRANSFER_SENT",
                         amount,
                         "Transfer to account " + receiver_account
                 );
-                // The receiver sees "TRANSFER_RECEIVED" in their history
+
                 transactionLogger.saveTransaction(
                         receiver_account,
                         "TRANSFER_RECEIVED",
                         amount,
                         "Transfer from account " + sender_account
                 );
-                // ──────────────────────────────────────────────────
+
 
                 return "SUCCESS";
             }
